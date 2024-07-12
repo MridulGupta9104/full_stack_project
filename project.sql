@@ -1,0 +1,18 @@
+show databases;
+create database prda;
+use prda;
+create table users(emailid varchar(30) primary key,pwd varchar(10),utype varchar(30),dos date,status int);
+select * from users;
+drop table users;
+insert into users values('hi@gmail.com','12345','Customer',current_date(),0);
+create table custprofile(emailid varchar(30) primary key,naam varchar(20),contact varchar(10),address varchar(40),city varchar(20),state varchar(50),ppic varchar(30));
+select * from custprofile;
+insert into custprofile values('hi@gmail.com','bhfbjh','jshhfk','kjhkhb','bkdchv','khc','vhkfkkf');
+update custprofile set naam="mewhy" where emailid="hi@gmail.com";
+create table tasks(rid int primary key auto_increment,emailid varchar(40),category varchar(20),address varchar(50),city varchar(20),upto date,task varchar(200));
+select * from tasks;
+create table providers(emailid varchar(40) primary key,name varchar(30),contact varchar(12),gender varchar(10),category varchar(30),firm varchar(50),website varchar(50),location varchar(100),since date,proofpic varchar(30),otherinfo varchar(500));
+select * from providers;
+drop table providers;
+drop table custprofile;
+insert into providers values('hello@gmail.com','bhfbjh','jshhfk','Male','Plumber','khc','vhkfkkf','bvbdbhjb','2024-02-06','hello.jpeg','hjdfvhsjsvvfvjfvjvfbfbhj');
