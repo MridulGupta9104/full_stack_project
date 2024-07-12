@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script>
+        var module = angular.module("mymodule", []);
+        var controller = module.controller("mycontroller", function ($scope, $http) {
+            $scope.jsonrecordsary = [];
+            $scope.selrecord = [];
+            $scope.dofetchall = function () {
+                let url = "/angular-fetch-all";
+                $http.get(url).then(success, errors);
+                function success(response) {
+                    $scope.jsonrecordsary = response.data;
+                }
+                function errors(response) {
+                    alert(response.data);
+                }
+            }
+            $scope.dofetchrec = function (index) {
+                //alert(index);
+                //alert(JSON.stringify($scope.jsonrecordsary[index]));
+                $scope.selrecord = $scope.jsonrecordsary[index];
+            }
+            $scope.pwdary = [];
+            $scope.fetchpwd = function () {
+                let url = "/fetch-pwd";
+                $http.get(url).then(success, errors);
+                function success(response) {
+                    $scope.pwdary = response.data;
+                }
+                function errors(response) {
+                    alert(response.data);
+                }
+            }
+            $scope.doshowselpwd = function () {
+                //alert(JSON.stringify($scope.selpwd));
+                alert($scope.selpwd.pwd);
+                let url = "/fetch-pwd-rec?pwd=" + $scope.selpwd.pwd;
+                $http.get(url).then(success, errors);
+                function success(response) {
+                    $scope.jsonrecordsary = response.data;
+                }
+                function errors(response) {
+                    alert(response.data);
+                }
+            }
+            $scope.doblock = function (emailid) {
+                if (confirm("Do you really want to block?") == false) {
+                    return;
+                }
+                let url = "/angular-block?emailkuch=" + emailid;
+                $http.get(url).then(success, errors);
+                function success(response) {
+                    alert(response.data);
+                    $scope.dofetchall();
+                }
+                function errors(response) {
+                    alert(response.data);
+                }
+            }
+            $scope.doresume = function (emailid) {
+                if (confirm("Do you really want to resume?") == false) {
+                    return;
+                }
+                let url = "/angular-resume?emailkuch=" + emailid;
+                $http.get(url).then(success, errors);
+                function success(response) {
+                    alert(response.data);
+                    $scope.dofetchall();
+                }
+                function errors(response) {
+                    alert(response.data);
+                }
+            }
+        })
+    </script>
+    <script>
+        function doShowPrev(refFile, refImg) {
+            const [file] = refFile.files
+            if (file) {
+                refImg.src = URL.createObjectURL(file)
+            }
+        }
+    </script>
+</head>
+
+
+<body ng-app="mymodule" ng-controller="mycontroller" ng-init="dofetchall();fetchpwd();">
+    <center>
+        <input type="button" value="Fetch All Records" ng-click="dofetchall();">
+        <table width="800" border="1" rules="all">
+            <tr>
+                <th>Email</th>
+                <th>Password</th>
+                <th>User Type</th>
+                <th>DOS</th>
+                <th>Status</th>
+                <th>Operations</th>
+            </tr>
+            <tr ng-repeat="obj in jsonrecordsary">
+                <td>{{obj.emailid}}</td>
+                <td>{{obj.pwd}}</td>
+                <td>{{obj.utype}}</td>
+                <td>{{obj.dos}}</td>
+                <td>{{obj.status}}</td>
+                <th>
+                    <a href="#" ng-click="doblock(obj.emailid);">Block</a>
+                    <a href="#" ng-click="doresume(obj.emailid);">Resume</a>
+                </th>
+            </tr>
+        </table>
+    </center>
+    <div class="row">
+        <div class="col-md-12">
+            <center>
+                <h2>
+                    All Records
+                    <!--ng-init="fetchpwd();"-->
+                    <!--<option value="{{obj.pwd}}" ng-repeat="obj in pwdary">{{obj.pwd}}</option>-->
+                    <select ng-options="obj.pwd for obj in pwdary" ng-model="selpwd" ng-change="doshowselpwd();"
+                        class="form-select" style="width: 400px;">
+                        <option value="">Different Passwords</option>
+                    </select>
+                </h2>
+            </center>
+        </div>
+    </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3" ng-repeat="obj in jsonrecordsary">
+                <div class="card" style="width: 18rem;">
+                    <img src="uploads/{{obj.ppic}}" class="card-img-top" id="prev" name="prev">
+                    <div class="card-body">
+                        <h5 class="card-title">{{obj.emailid}}</h5>
+                        <p class="card-text">
+                        <p>
+                            Password:{{obj.pwd}}
+                        </p>
+                        <p>
+                            Date of Signup:{{obj.dos}}
+                        </p>
+                        </p>
+                        <p>
+                            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detail"
+                                ng-click="dofetchrec($index);">Show Full Details</a>
+                        </p>
+                        <!--<input type="button" class="btn btn-primary" value="Show Full Details" data-bs-toggle="modal"
+                            data-bs-target="#detail" ng-click="dofetchrec(index);"> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Show Full Details Modal -->
+    <div class="modal fade" id="detail" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Details</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Email : {{selrecord.emailid}}
+                    </p>
+                    <p>
+                        Password : {{selrecord.pwd}}
+                    </p>
+                    <p>
+                        User Type : {{selrecord.utype}}
+                    </p>
+                    <p>
+                        DOS : {{selrecord.dos}}
+                    </p>
+                    <p>
+                        Status : {{selrecord.status}}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
